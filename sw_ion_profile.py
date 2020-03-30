@@ -6,8 +6,10 @@ Created on Wed Sep 25 21:55:17 2019
 """
 
 import xarray as xr
+import glob
+import os
 
-def process_file(filepath, level_idx):
+def process_file(filepath):
     data = []
 
     ds = xr.open_dataset(filepath)
@@ -22,6 +24,8 @@ def process_file(filepath, level_idx):
             dsloc.data_vars['GEO_lat'].data, 
             dsloc.data_vars['GEO_lon'].data)
         ])
+
+    return data
 
 def save_to_ascii_file(data_list, out_filepath, header=[]):
     write_list = []
@@ -38,7 +42,21 @@ def save_to_ascii_file(data_list, out_filepath, header=[]):
         f.writelines(write_list)
 
 def main():
-    pass
+    print("Script is started")
+
+    files = glob.glob("./input/*.*")    
+
+    for filepath in files:
+        print("Process >> " + filepath)
+
+        data_to_save = process_file(filepath)
+        out_filepath = "./output/" + os.path.basename(filepath) + ".dat"
+
+        save_to_ascii_file(data_to_save, out_filepath)
+        print("Saved to >>" + out_filepath)
+        print()
+
+    print("Script is finished")
 
 if __name__ == "__main__":
     main()
