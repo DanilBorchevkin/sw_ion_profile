@@ -16,7 +16,6 @@ def process_file(filepath):
     
     for alt in ds.coords['MSL_alt'].data:
         dsloc = ds.sel(MSL_alt=alt)
-        buffer = "{}\t{}\t{}\t{}\n".format(
 
         data.append([
             alt, 
