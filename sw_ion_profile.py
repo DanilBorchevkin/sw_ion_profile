@@ -21,8 +21,7 @@ def process_file(filepath):
             alt, 
             dsloc.data_vars['ELEC_dens'].data, 
             dsloc.data_vars['GEO_lat'].data, 
-            dsloc.data_vars['GEO_lon'].data)
-        ])
+            dsloc.data_vars['GEO_lon'].data])
 
     return data
 
@@ -48,12 +47,17 @@ def main():
     for filepath in files:
         print("Process >> " + filepath)
 
-        data_to_save = process_file(filepath)
-        out_filepath = "./output/" + os.path.basename(filepath) + ".dat"
+        try:
+            data_to_save = process_file(filepath)
+            out_filepath = "./output/" + os.path.basename(filepath) + ".dat"
 
-        save_to_ascii_file(data_to_save, out_filepath)
-        print("Saved to >>" + out_filepath)
-        print()
+            save_to_ascii_file(data_to_save, out_filepath)
+            print("Saved to >> " + out_filepath)
+            print()
+        except:
+            pass
+        finally:
+            pass
 
     print("Script is finished")
 
