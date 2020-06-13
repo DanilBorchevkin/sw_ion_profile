@@ -15,7 +15,7 @@ def process_file(filepath, use_coords=False, min_lat=0, max_lat=0, min_long=0, m
 
     For get all data use use_coords=False
 
-    For 
+    For use min\max - set use_coords=True and set appritiate values
     '''
 
     data = []
@@ -75,14 +75,18 @@ def main():
         try:
             data_to_save = process_file(filepath, use_coords, min_lat, max_lat, min_long, max_long)
             out_filepath = "./output/" + os.path.basename(filepath) + ".dat"
-
-            save_to_ascii_file(data_to_save, out_filepath)
-            print("Saved to >> " + out_filepath)
-            print()
+            
+            if (len(data_to_save) > 0):
+                save_to_ascii_file(data_to_save, out_filepath)
+                print("Saved to >> " + out_filepath)
+            else:
+                print("No data for saving. Ignoring")
+            
         except:
             print("Cannot process >> ", filepath)
+            
         finally:
-            pass
+            print()
 
     print("Script is finished")
 
