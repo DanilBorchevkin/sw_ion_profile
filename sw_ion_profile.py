@@ -9,19 +9,36 @@ import xarray as xr
 import glob
 import os
 
-def process_file(filepath):
+def process_file(filepath, use_coords=False, min_lat=0, max_lat=0, min_long=0, max_long=0):
+    '''
+    Process nc input file
+
+    For get all data use use_coords=False
+
+    For 
+    '''
+
     data = []
 
     ds = xr.open_dataset(filepath)
     
     for alt in ds.coords['MSL_alt'].data:
         dsloc = ds.sel(MSL_alt=alt)
+        
+        current_lat = dsloc.data_vars['GEO_lat'].data.item()
+        current_long = dsloc.data_vars['GEO_lon'].data.item()
+
+        if use_coords == True:
+            if (min_lat <= current_lat <= max_lat) and (min_long <= current_long <= max_long):
+                pass
+            else:
+                continue
 
         data.append([
             alt, 
-            dsloc.data_vars['ELEC_dens'].data, 
-            dsloc.data_vars['GEO_lat'].data, 
-            dsloc.data_vars['GEO_lon'].data])
+            dsloc.data_vars['ELEC_dens'].data.item(), 
+            dsloc.data_vars['GEO_lat'].data.item(), 
+            dsloc.data_vars['GEO_lon'].data.item()])
 
     return data
 
@@ -42,20 +59,28 @@ def save_to_ascii_file(data_list, out_filepath, header=[]):
 def main():
     print("Script is started")
 
+    # For save all data set use_coords = False
+    # For restrict data by min\max set use_coords = True and fix needed ranges by min\max values
+    use_coords = True
+    min_lat = -20.0
+    max_lat = -15.0
+    min_long = 30.0
+    max_long = 35.0
+
     files = glob.glob("./input/*.*")    
 
     for filepath in files:
         print("Process >> " + filepath)
 
         try:
-            data_to_save = process_file(filepath)
+            data_to_save = process_file(filepath, use_coords, min_lat, max_lat, min_long, max_long)
             out_filepath = "./output/" + os.path.basename(filepath) + ".dat"
 
             save_to_ascii_file(data_to_save, out_filepath)
             print("Saved to >> " + out_filepath)
             print()
         except:
-            pass
+            print("Cannot process >> ", filepath)
         finally:
             pass
 
